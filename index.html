@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy 25th Birthday, Tamer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;600;800&family=IBM+Plex+Sans+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="./vendor-three.min.js"></script>
+<script src="./vendor-confetti.min.js"></script>
+<style>
+  :root{
+    --bg:#0b0e11; --card:#12161a; --card2:#171c21; --line:#232a31;
+    --green:#1db954; --green-d:#169c46; --gold:#f5c542; --white:#f5f7f8; --muted:#9aa5ad;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--white);font-family:'Inter',system-ui,sans-serif;overflow-x:hidden}
+  .wrap{max-width:860px;margin:0 auto;padding:0 20px}
+  section{padding:64px 0 8px}
+
+  /* ---------- hero ---------- */
+  header{padding:72px 0 8px;text-align:center;position:relative}
+  .badge{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:7px 16px;font-size:13px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase}
+  .badge b{color:var(--green)}
+  h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(44px,9vw,84px);line-height:1.02;margin:22px 0 6px;letter-spacing:-.02em}
+  h1 .n25{color:var(--green)}
+  h2.name{font-family:'Space Grotesk',sans-serif;font-size:clamp(30px,6vw,52px);color:var(--gold);letter-spacing:.06em}
+  .sub{color:var(--muted);font-size:17px;margin-top:14px}
+  .hint{font-size:13px;color:var(--muted);margin-top:10px;letter-spacing:.05em}
+
+  /* ---------- 3D gift ---------- */
+  #gift-wrap{position:relative;margin:26px auto 0;width:min(420px,92vw)}
+  #gift-canvas{width:100%;height:340px;display:block;cursor:grab;touch-action:none;border-radius:20px;background:radial-gradient(ellipse at 50% 80%,#182019 0%,#0b0e11 70%)}
+  #gift-canvas:active{cursor:grabbing}
+  .shadow{width:180px;height:16px;margin:-8px auto 0;border-radius:50%;background:rgba(0,0,0,.55);filter:blur(6px)}
+  #gift-reveal{display:none;margin-top:18px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px}
+  #gift-reveal.show{display:block;animation:pop .45s ease}
+  @keyframes pop{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:none}}
+  .gift-tag{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--green);font-weight:800}
+  .gift-title{font-family:'Space Grotesk',sans-serif;font-size:26px;margin:8px 0 6px}
+  .gift-title span{color:var(--green)}
+  .gift-note{color:var(--muted);font-size:15px;line-height:1.6}
+  .gift-note b{color:var(--white)}
+  .btn{display:inline-block;margin-top:16px;background:var(--green);color:#06130a;border:0;border-radius:999px;padding:13px 26px;font-weight:800;font-size:15px;cursor:pointer;font-family:'Inter',sans-serif}
+  .btn:hover{background:var(--green-d)}
+  .btn.ghost{background:transparent;color:var(--white);border:1px solid var(--line)}
+  .btn.ghost:hover{border-color:var(--green);color:var(--green)}
+
+  /* ---------- section titles ---------- */
+  .sec-tag{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--green);font-weight:800}
+  .sec-title{font-family:'Space Grotesk',sans-serif;font-size:clamp(26px,5vw,36px);margin:10px 0 8px}
+  .sec-desc{color:var(--muted);font-size:15.5px;line-height:1.65;max-width:600px}
+
+  /* ---------- terminal ---------- */
+  .term{background:#05070a;border:1px solid var(--line);border-radius:16px;margin-top:22px;overflow:hidden}
+  .term-bar{display:flex;gap:7px;padding:12px 14px;border-bottom:1px solid var(--line)}
+  .dot{width:11px;height:11px;border-radius:50%}
+  .dot.r{background:#ff5f57}.dot.y{background:#febc2e}.dot.g{background:#28c840}
+  .term-body{padding:18px;font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:14.5px;line-height:1.9;min-height:250px;white-space:pre-wrap;color:#c9f5d6}
+  .term-body .cmd{color:var(--green);font-weight:700}
+  .term-body .ok{color:var(--gold);font-weight:700}
+  .cursor{display:inline-block;width:9px;height:17px;background:var(--green);vertical-align:-3px;animation:blink 1s steps(1) infinite}
+  @keyframes blink{50%{opacity:0}}
+  .term-actions{padding:0 18px 18px;display:flex;gap:10px;flex-wrap:wrap}
+
+  /* ---------- cake ---------- */
+  .cake-card{background:var(--card);border:1px solid var(--line);border-radius:18px;margin-top:22px;padding:28px 20px 24px;text-align:center}
+  .flames{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;max-width:520px;margin:0 auto 6px}
+  .flame{width:26px;height:34px;position:relative;cursor:pointer}
+  .flame .f{position:absolute;left:50%;bottom:8px;width:16px;height:24px;transform:translateX(-50%);border-radius:50% 50% 50% 50%/62% 62% 38% 38%;background:radial-gradient(circle at 50% 78%,#fff6c9 0%,#ffd23e 35%,#ff7a18 70%,#e8490f 100%);transform-origin:50% 100%;animation:flick .28s ease-in-out infinite alternate}
+  @keyframes flick{from{transform:translateX(-50%) scaleY(1) rotate(-2deg)}to{transform:translateX(-50%) scaleY(1.14) rotate(2deg)}}
+  .flame .w{position:absolute;left:50%;bottom:0;width:3px;height:9px;transform:translateX(-50%);background:#e8e0cf;border-radius:2px}
+  .flame.out{cursor:default}
+  .flame.out .f{display:none}
+  .flame.out::after{content:"";position:absolute;left:50%;bottom:14px;width:8px;height:8px;border-radius:50%;background:rgba(180,190,200,.55);transform:translateX(-50%);animation:smoke 1.1s ease-out forwards}
+  @keyframes smoke{from{opacity:.8;transform:translate(-50%,0) scale(1)}to{opacity:0;transform:translate(-50%,-26px) scale(2.4)}}
+  .cake{margin:14px auto 0;width:min(420px,88%);position:relative}
+  .cake .plate{height:14px;background:#2a3138;border-radius:8px}
+  .cake .base{height:64px;background:linear-gradient(#8a5a2b,#6f4520);border-radius:10px 10px 0 0;position:relative;overflow:hidden}
+  .cake .icing{height:22px;background:linear-gradient(#f5f7f8,#dfe5e8);border-radius:0 0 12px 12px;position:relative}
+  .cake .icing::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 12% 0,#1db954 0 5px,transparent 6px),radial-gradient(circle at 32% 0,#f5c542 0 5px,transparent 6px),radial-gradient(circle at 52% 0,#ff5f57 0 5px,transparent 6px),radial-gradient(circle at 72% 0,#1db954 0 5px,transparent 6px),radial-gradient(circle at 90% 0,#f5c542 0 5px,transparent 6px)}
+  .cake .mid{height:44px;background:linear-gradient(#a06a33,#7d4f24)}
+  .blown{font-size:15px;color:var(--muted);margin-top:16px}
+  .blown b{color:var(--green)}
+  #wish{display:none;margin-top:14px;font-family:'Space Grotesk',sans-serif;font-size:20px;color:var(--gold)}
+  #wish.show{display:block;animation:pop .45s ease}
+
+  /* ---------- 25 tap ---------- */
+  .tap-card{background:var(--card);border:1px solid var(--line);border-radius:18px;margin-top:22px;padding:30px 20px;text-align:center}
+  .tap-num{font-family:'Space Grotesk',sans-serif;font-size:64px;line-height:1;color:var(--green)}
+  .tap-num small{font-size:22px;color:var(--muted)}
+  .tap-bar{height:10px;background:#0b0e11;border:1px solid var(--line);border-radius:99px;margin:18px auto 6px;max-width:420px;overflow:hidden}
+  .tap-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--green),var(--gold));transition:width .25s ease}
+  .tap-btn{width:120px;height:120px;border-radius:50%;border:0;background:var(--green);color:#06130a;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:17px;cursor:pointer;margin:20px auto 8px;display:block;box-shadow:0 10px 30px rgba(29,185,84,.28);transition:transform .08s ease}
+  .tap-btn:active{transform:scale(.93)}
+  #tap-msg{display:none;margin-top:10px;font-family:'Space Grotesk',sans-serif;font-size:20px;color:var(--gold)}
+  #tap-msg.show{display:block;animation:pop .45s ease}
+
+  /* ---------- message ---------- */
+  .msg-card{background:linear-gradient(160deg,#12211a,#12161a);border:1px solid #23402e;border-radius:18px;margin-top:22px;padding:30px 26px}
+  .msg-ar{font-family:'IBM Plex Sans Arabic',sans-serif;direction:rtl;text-align:right;font-size:19px;line-height:2;color:#eef3ee}
+  .msg-ar b{color:var(--gold)}
+  .msg-en{margin-top:18px;font-size:15px;line-height:1.7;color:var(--muted)}
+  .from{margin-top:20px;font-size:14px;color:var(--muted)}
+  .from b{color:var(--white)}
+
+  /* ---------- easter egg ---------- */
+  #egg{display:none;text-align:center;padding:26px 16px;border:1px dashed var(--gold);border-radius:18px;margin-top:22px}
+  #egg.show{display:block;animation:pop .45s ease}
+  #egg h3{font-family:'Space Grotesk',sans-serif;color:var(--gold);font-size:22px}
+  #egg p{color:var(--muted);margin-top:8px;font-size:15px;line-height:1.6}
+  .type-hint{text-align:center;color:var(--muted);font-size:13px;margin-top:34px;letter-spacing:.04em}
+  .type-hint kbd{background:#1c2228;border:1px solid var(--line);border-radius:6px;padding:2px 8px;font-family:inherit;color:var(--white)}
+
+  footer{padding:56px 0 44px;text-align:center;color:var(--muted);font-size:13.5px;line-height:1.8}
+  footer b{color:var(--white)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <span class="badge">EST. <b>13 NOV 2001</b> &nbsp;·&nbsp; LEVEL <b>25</b> UNLOCKED</span>
+    <h1>HAPPY <span class="n25">25th</span><br>BIRTHDAY</h1>
+    <h2 class="name">TAMER</h2>
+    <p class="sub">A software engineer. A legend. Twenty-five years in the making.</p>
+    <p class="hint">Scroll down — there are 4 tricks hiding in this page. Find them all.</p>
+  </header>
+
+  <!-- TRICK 1 : 3D GIFT BOX -->
+  <section>
+    <span class="sec-tag">Trick 01 — The 3D Gift</span>
+    <h3 class="sec-title">Drag it. Spin it. Open it.</h3>
+    <p class="sec-desc">A real 3D gift box, rendered live in your browser. Drag to rotate it — then tap the box to see what's inside.</p>
+    <div id="gift-wrap">
+      <canvas id="gift-canvas"></canvas>
+      <div class="shadow"></div>
+      <div id="gift-reveal">
+        <div class="gift-tag">Your gift — revealed</div>
+        <div class="gift-title">Spotify <span>Premium</span></div>
+        <p class="gift-note">One full <b>Spotify Premium</b> account — yours, from Mustafa. Ad-free music, offline downloads, unlimited skips. The login details were sent to you separately — check your messages.</p>
+        <button class="btn" onclick="document.getElementById('terminal').scrollIntoView({behavior:'smooth'})">But first — run the hack ↓</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRICK 2 : TERMINAL HACK -->
+  <section id="terminal">
+    <span class="sec-tag">Trick 02 — The Hack</span>
+    <h3 class="sec-title">sudo open-gift --force</h3>
+    <p class="sec-desc">Every software engineer deserves a birthday hack. Press run and watch the system do its thing. Totally legal. Probably.</p>
+    <div class="term">
+      <div class="term-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div>
+      <div class="term-body" id="term-body">mustafa@birthday:~$ <span class="cursor"></span></div>
+      <div class="term-actions">
+        <button class="btn" id="run-hack">▶ Run the hack</button>
+        <button class="btn ghost" id="reset-hack">Reset terminal</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRICK 3 : BLOW THE CANDLES -->
+  <section>
+    <span class="sec-tag">Trick 03 — Make a Wish</span>
+    <h3 class="sec-title">25 candles. Blow them all out.</h3>
+    <p class="sec-desc">Tap each flame to blow it out — or hit the button and let the wind do it. When the last one dies, your wish is sealed.</p>
+    <div class="cake-card">
+      <div class="flames" id="flames"></div>
+      <div class="cake">
+        <div class="icing"></div>
+        <div class="mid"></div>
+        <div class="base"></div>
+        <div class="plate"></div>
+      </div>
+      <p class="blown"><b id="blown-count">0</b> / 25 candles out</p>
+      <button class="btn ghost" id="blow-all" style="margin-top:14px">Blow them all out</button>
+      <div id="wish">Your wish is sealed. 25 looks good on you.</div>
+    </div>
+  </section>
+
+  <!-- TRICK 4 : 25 TAPS -->
+  <section>
+    <span class="sec-tag">Trick 04 — 25 Years, 25 Taps</span>
+    <h3 class="sec-title">One tap for every year.</h3>
+    <p class="sec-desc">Twenty-five years of Tamer. Twenty-five taps. The button is waiting.</p>
+    <div class="tap-card">
+      <div class="tap-num"><span id="tap-count">0</span><small> / 25</small></div>
+      <div class="tap-bar"><div class="tap-fill" id="tap-fill"></div></div>
+      <button class="tap-btn" id="tap-btn">TAP<br>ME</button>
+      <div id="tap-msg">25 years. 25 taps. One legend. Happy birthday, Tamer.</div>
+    </div>
+  </section>
+
+  <!-- MESSAGE -->
+  <section>
+    <span class="sec-tag">The Message</span>
+    <h3 class="sec-title">From Mustafa, with code and cake.</h3>
+    <div class="msg-card">
+      <p class="msg-ar">تامر، كل عام وانت بخير — <b>٢٥ سنة</b>. سنة ٧ خلصت، وسنة ٨ جاية: سنة القوة والمال. الناسك اللي بيك يشوف بالظلام، والكلمة سلاحك — السنة الجاية صوتك يوصل أبعد. عيد ميلاد سعيد يا صاحبي.</p>
+      <p class="msg-en">Tamer — happy 25th. Year 7 is done, year 8 is coming: the year of power and money. The hermit in you sees in the dark, and your word is your weapon — next year your voice reaches further. Happy birthday, my friend.</p>
+      <p class="from">— <b>Mustafa</b> · built this page for you, line by line</p>
+    </div>
+    <div id="egg">
+      <h3>You found the easter egg.</h3>
+      <p>You typed the magic word. That is exactly the kind of curiosity that makes you a great engineer — and a dangerous birthday guest. Happy 25th, Tamer.</p>
+    </div>
+    <p class="type-hint">Psst — try typing <kbd>tamer</kbd> anywhere on this page.</p>
+  </section>
+
+  <footer>
+    <b>Happy 25th Birthday, Tamer</b><br>
+    13 November 2001 — 13 November 2026<br>
+    Made by Mustafa · No candles were harmed
+  </footer>
+</div>
+
+<script>
+/* ============ confetti helper ============ */
+function boom(big){
+  const base = {spread:75, ticks:220, gravity:.9, decay:.93, startVelocity:38, colors:['#1db954','#f5c542','#ffffff','#8b5cf6','#ff5f57']};
+  confetti(Object.assign({}, base, {particleCount: big?160:70, origin:{y:.6}}));
+  if(big){
+    setTimeout(()=>confetti(Object.assign({}, base, {particleCount:110, angle:60, spread:60, origin:{x:0, y:.7}})), 180);
+    setTimeout(()=>confetti(Object.assign({}, base, {particleCount:110, angle:120, spread:60, origin:{x:1, y:.7}})), 320);
+  }
+}
+
+/* ============ TRICK 1 : 3D gift box (Three.js r128) ============ */
+(function(){
+  const canvas = document.getElementById('gift-canvas');
+  const renderer = new THREE.WebGLRenderer({canvas, alpha:true, antialias:true});
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(38, 1, .1, 100);
+  camera.position.set(0, 2.4, 7.4);
+  camera.lookAt(0, .2, 0);
+  scene.add(new THREE.AmbientLight(0xffffff, .75));
+  const key = new THREE.DirectionalLight(0xffffff, .9); key.position.set(4, 6, 5); scene.add(key);
+  const rim = new THREE.DirectionalLight(0x1db954, .5); rim.position.set(-5, 3, -4); scene.add(rim);
+
+  const group = new THREE.Group(); scene.add(group);
+  const green = new THREE.MeshStandardMaterial({color:0x1db954, roughness:.45, metalness:.15});
+  const gold  = new THREE.MeshStandardMaterial({color:0xf5c542, roughness:.35, metalness:.45});
+  const dark  = new THREE.MeshStandardMaterial({color:0x0e2b1a, roughness:.6});
+
+  const box = new THREE.Mesh(new THREE.BoxGeometry(2.6, 1.9, 2.6), green); box.position.y = -.35; group.add(box);
+  const lid = new THREE.Mesh(new THREE.BoxGeometry(2.85, .55, 2.85), dark); lid.position.y = .85; group.add(lid);
+  const ribbonV = new THREE.Mesh(new THREE.BoxGeometry(.5, 2.5, 2.66), gold); ribbonV.position.y = -.35; group.add(ribbonV);
+  const ribbonH = new THREE.Mesh(new THREE.BoxGeometry(2.66, 2.5, .5), gold); ribbonH.position.y = -.35; group.add(ribbonH);
+  const ribbonLidV = new THREE.Mesh(new THREE.BoxGeometry(.5, .6, 2.9), gold); ribbonLidV.position.y = .85; group.add(ribbonLidV);
+  const ribbonLidH = new THREE.Mesh(new THREE.BoxGeometry(2.9, .6, .5), gold); ribbonLidH.position.y = .85; group.add(ribbonLidH);
+  const bow1 = new THREE.Mesh(new THREE.TorusGeometry(.34, .13, 10, 20), gold); bow1.position.set(-.32, 1.28, 0); bow1.rotation.z = .7; group.add(bow1);
+  const bow2 = bow1.clone(); bow2.position.x = .32; bow2.rotation.z = -.7; group.add(bow2);
+
+  let open = false, openT = 0, dragging = false, px = 0, py = 0, rotY = .5, rotX = .12, vY = 0, moved = 0;
+  function size(){
+    const w = canvas.clientWidth, h = canvas.clientHeight;
+    renderer.setSize(w, h, false);
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    camera.aspect = w / h; camera.updateProjectionMatrix();
+  }
+  size(); addEventListener('resize', size);
+
+  canvas.addEventListener('pointerdown', e=>{dragging=true; moved=0; px=e.clientX; py=e.clientY; canvas.setPointerCapture(e.pointerId)});
+  canvas.addEventListener('pointermove', e=>{
+    if(!dragging) return;
+    const dx = e.clientX-px, dy = e.clientY-py; px=e.clientX; py=e.clientY;
+    moved += Math.abs(dx)+Math.abs(dy);
+    rotY += dx*.008; rotX = Math.max(-.3, Math.min(.5, rotX + dy*.005));
+  });
+  canvas.addEventListener('pointerup', ()=>{
+    dragging=false;
+    if(moved < 6){ // it was a tap, not a drag
+      open = !open;
+      if(open){
+        boom(true);
+        document.getElementById('gift-reveal').classList.add('show');
+      }
+    }
+  });
+
+  (function loop(){
+    requestAnimationFrame(loop);
+    if(!dragging){ rotY += .0035; }
+    openT += ((open?1:0) - openT) * .07;
+    lid.position.y = .85 + openT * 2.4;
+    lid.rotation.z = openT * .9; lid.rotation.x = openT * .25;
+    ribbonLidV.position.y = lid.position.y; ribbonLidV.rotation.z = lid.rotation.z; ribbonLidV.rotation.x = lid.rotation.x;
+    ribbonLidH.position.y = lid.position.y; ribbonLidH.rotation.z = lid.rotation.z; ribbonLidH.rotation.x = lid.rotation.x;
+    bow1.position.y = 1.28 + openT * 2.4; bow1.rotation.z = .7 + openT * .9;
+    bow2.position.y = 1.28 + openT * 2.4; bow2.rotation.z = -.7 - openT * .9;
+    group.rotation.y = rotY; group.rotation.x = rotX;
+    group.position.y = Math.sin(Date.now()*.0012) * .06;
+    renderer.render(scene, camera);
+  })();
+})();
+
+/* ============ TRICK 2 : terminal hack ============ */
+(function(){
+  const body = document.getElementById('term-body');
+  const runBtn = document.getElementById('run-hack');
+  const resetBtn = document.getElementById('reset-hack');
+  const PROMPT = 'mustafa@birthday:~$ ';
+  const lines = [
+    ['cmd', 'ssh tamer@birthday-server'],
+    ['txt', 'Connecting to tamer@birthday-server ... OK'],
+    ['cmd', 'sudo open-gift --force'],
+    ['txt', '[sudo] password for mustafa: ********'],
+    ['txt', 'Scanning for birthday ... found 1 (13 NOV 2001)'],
+    ['txt', 'Decrypting gift package ......... [██████████] 100%'],
+    ['txt', 'Deploying confetti cannons ...... [██████████] 100%'],
+    ['txt', 'Warming up 25 candles .......... [██████████] 100%'],
+    ['ok',  'ACCESS GRANTED — 1 × Spotify Premium unlocked'],
+    ['ok',  'Happy birthday, you magnificent nerd.'],
+  ];
+  let running = false, timers = [];
+  function typeLine(text, cls, done){
+    const div = document.createElement('div');
+    if(cls) div.className = cls;
+    body.appendChild(div);
+    let i = 0;
+    const t = setInterval(()=>{
+      div.textContent = text.slice(0, ++i);
+      if(i >= text.length){ clearInterval(t); done && done(); }
+    }, 14);
+    timers.push(t);
+  }
+  function newPrompt(){
+    const d = document.createElement('div');
+    d.innerHTML = PROMPT + '<span class="cursor"></span>';
+    body.appendChild(d);
+  }
+  runBtn.addEventListener('click', ()=>{
+    if(running) return; running = true; runBtn.style.opacity = .5;
+    body.querySelectorAll('.cursor').forEach(c=>c.remove());
+    let i = 0;
+    (function next(){
+      if(i >= lines.length){
+        newPrompt(); boom(true); running = false; runBtn.style.opacity = 1; return;
+      }
+      const [cls, txt] = lines[i++];
+      const show = cls === 'cmd' ? PROMPT + txt : txt;
+      typeLine(show, cls === 'cmd' ? 'cmd' : (cls === 'ok' ? 'ok' : ''), ()=> setTimeout(next, cls === 'cmd' ? 320 : 480));
+    })();
+  });
+  resetBtn.addEventListener('click', ()=>{
+    timers.forEach(clearInterval); timers = []; running = false; runBtn.style.opacity = 1;
+    body.innerHTML = PROMPT + '<span class="cursor"></span>';
+  });
+})();
+
+/* ============ TRICK 3 : blow the candles ============ */
+(function(){
+  const wrap = document.getElementById('flames');
+  const countEl = document.getElementById('blown-count');
+  const wish = document.getElementById('wish');
+  let blown = 0, done = false;
+  for(let i=0;i<25;i++){
+    const f = document.createElement('div');
+    f.className = 'flame';
+    f.innerHTML = '<span class="f"></span><span class="w"></span>';
+    f.addEventListener('click', ()=> blow(f));
+    wrap.appendChild(f);
+  }
+  function blow(f){
+    if(f.classList.contains('out') || done) return;
+    f.classList.add('out');
+    blown++;
+    countEl.textContent = blown;
+    if(blown >= 25){
+      done = true;
+      wish.classList.add('show');
+      boom(true);
+    } else if(blown % 5 === 0){
+      confetti({particleCount: 35, spread: 60, origin:{y:.7}, colors:['#1db954','#f5c542','#ffffff']});
+    }
+  }
+  document.getElementById('blow-all').addEventListener('click', ()=>{
+    if(done) return;
+    const flames = [...wrap.children];
+    flames.forEach((f, i)=> setTimeout(()=> blow(f), i * 90));
+  });
+})();
+
+/* ============ TRICK 4 : 25 taps ============ */
+(function(){
+  const btn = document.getElementById('tap-btn');
+  const countEl = document.getElementById('tap-count');
+  const fill = document.getElementById('tap-fill');
+  const msg = document.getElementById('tap-msg');
+  let n = 0;
+  btn.addEventListener('click', ()=>{
+    if(n >= 25) return;
+    n++;
+    countEl.textContent = n;
+    fill.style.width = (n / 25 * 100) + '%';
+    if(n === 25){
+      msg.classList.add('show');
+      boom(true);
+      btn.textContent = 'DONE';
+      btn.style.background = '#f5c542';
+    } else if(n % 5 === 0){
+      confetti({particleCount: 30, spread: 55, origin:{y:.7}, colors:['#1db954','#f5c542','#ffffff']});
+    }
+  });
+})();
+
+/* ============ EASTER EGG : type "tamer" ============ */
+(function(){
+  let buf = '';
+  addEventListener('keydown', e=>{
+    if(!e.key || e.key.length !== 1) return;
+    buf = (buf + e.key.toLowerCase()).slice(-5);
+    if(buf === 'tamer'){
+      buf = '';
+      const egg = document.getElementById('egg');
+      if(!egg.classList.contains('show')){
+        egg.classList.add('show');
+        egg.scrollIntoView({behavior:'smooth', block:'center'});
+        boom(true);
+      }
+    }
+  });
+})();
+</script>
+</body>
+</html>
