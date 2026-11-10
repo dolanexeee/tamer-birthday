@@ -11,7 +11,7 @@
 <style>
   :root{
     --bg:#0b0e11; --card:#12161a; --card2:#171c21; --line:#232a31;
-    --green:#1db954; --green-d:#169c46; --gold:#f5c542; --white:#f5f7f8; --muted:#9aa5ad;
+    --green:#2f81f7; --green-d:#1a66d2; --gold:#f5c542; --white:#f5f7f8; --muted:#9aa5ad;
   }
   *{margin:0;padding:0;box-sizing:border-box}
   html{scroll-behavior:smooth}
@@ -46,6 +46,14 @@
   .btn:hover{background:var(--green-d)}
   .btn.ghost{background:transparent;color:var(--white);border:1px solid var(--line)}
   .btn.ghost:hover{border-color:var(--green);color:var(--green)}
+  .creds{margin-top:16px;background:#0b0e11;border:1px solid var(--line);border-radius:12px;padding:4px 14px}
+  .cred-row{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--line)}
+  .cred-row:last-child{border-bottom:0}
+  .cred-label{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);width:74px;flex-shrink:0}
+  .cred-val{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:14.5px;color:var(--white);word-break:break-all;flex:1}
+  .copy-btn{background:#1c2228;color:var(--white);border:1px solid var(--line);border-radius:8px;padding:7px 12px;font-size:13px;cursor:pointer;flex-shrink:0}
+  .copy-btn:hover{border-color:var(--green);color:var(--green)}
+  .cred-warn{margin-top:14px;font-size:13.5px;line-height:1.6;color:var(--gold)}
 
   /* ---------- section titles ---------- */
   .sec-tag{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--green);font-weight:800}
@@ -57,7 +65,7 @@
   .term-bar{display:flex;gap:7px;padding:12px 14px;border-bottom:1px solid var(--line)}
   .dot{width:11px;height:11px;border-radius:50%}
   .dot.r{background:#ff5f57}.dot.y{background:#febc2e}.dot.g{background:#28c840}
-  .term-body{padding:18px;font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:14.5px;line-height:1.9;min-height:250px;white-space:pre-wrap;color:#c9f5d6}
+  .term-body{padding:18px;font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:14.5px;line-height:1.9;min-height:250px;white-space:pre-wrap;color:#cfe4ff}
   .term-body .cmd{color:var(--green);font-weight:700}
   .term-body .ok{color:var(--gold);font-weight:700}
   .cursor{display:inline-block;width:9px;height:17px;background:var(--green);vertical-align:-3px;animation:blink 1s steps(1) infinite}
@@ -79,7 +87,7 @@
   .cake .plate{height:14px;background:#2a3138;border-radius:8px}
   .cake .base{height:64px;background:linear-gradient(#8a5a2b,#6f4520);border-radius:10px 10px 0 0;position:relative;overflow:hidden}
   .cake .icing{height:22px;background:linear-gradient(#f5f7f8,#dfe5e8);border-radius:0 0 12px 12px;position:relative}
-  .cake .icing::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 12% 0,#1db954 0 5px,transparent 6px),radial-gradient(circle at 32% 0,#f5c542 0 5px,transparent 6px),radial-gradient(circle at 52% 0,#ff5f57 0 5px,transparent 6px),radial-gradient(circle at 72% 0,#1db954 0 5px,transparent 6px),radial-gradient(circle at 90% 0,#f5c542 0 5px,transparent 6px)}
+  .cake .icing::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 12% 0,#2f81f7 0 5px,transparent 6px),radial-gradient(circle at 32% 0,#f5c542 0 5px,transparent 6px),radial-gradient(circle at 52% 0,#ff5f57 0 5px,transparent 6px),radial-gradient(circle at 72% 0,#2f81f7 0 5px,transparent 6px),radial-gradient(circle at 90% 0,#f5c542 0 5px,transparent 6px)}
   .cake .mid{height:44px;background:linear-gradient(#a06a33,#7d4f24)}
   .blown{font-size:15px;color:var(--muted);margin-top:16px}
   .blown b{color:var(--green)}
@@ -92,13 +100,13 @@
   .tap-num small{font-size:22px;color:var(--muted)}
   .tap-bar{height:10px;background:#0b0e11;border:1px solid var(--line);border-radius:99px;margin:18px auto 6px;max-width:420px;overflow:hidden}
   .tap-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--green),var(--gold));transition:width .25s ease}
-  .tap-btn{width:120px;height:120px;border-radius:50%;border:0;background:var(--green);color:#06130a;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:17px;cursor:pointer;margin:20px auto 8px;display:block;box-shadow:0 10px 30px rgba(29,185,84,.28);transition:transform .08s ease}
+  .tap-btn{width:120px;height:120px;border-radius:50%;border:0;background:var(--green);color:#06130a;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:17px;cursor:pointer;margin:20px auto 8px;display:block;box-shadow:0 10px 30px rgba(47,129,247,.28);transition:transform .08s ease}
   .tap-btn:active{transform:scale(.93)}
   #tap-msg{display:none;margin-top:10px;font-family:'Space Grotesk',sans-serif;font-size:20px;color:var(--gold)}
   #tap-msg.show{display:block;animation:pop .45s ease}
 
   /* ---------- message ---------- */
-  .msg-card{background:linear-gradient(160deg,#12211a,#12161a);border:1px solid #23402e;border-radius:18px;margin-top:22px;padding:30px 26px}
+  .msg-card{background:linear-gradient(160deg,#101a2e,#12161a);border:1px solid #1e3a5f;border-radius:18px;margin-top:22px;padding:30px 26px}
   .msg-ar{font-family:'IBM Plex Sans Arabic',sans-serif;direction:rtl;text-align:right;font-size:19px;line-height:2;color:#eef3ee}
   .msg-ar b{color:var(--gold)}
   .msg-en{margin-top:18px;font-size:15px;line-height:1.7;color:var(--muted)}
@@ -139,7 +147,20 @@
       <div id="gift-reveal">
         <div class="gift-tag">Your gift — revealed</div>
         <div class="gift-title">Spotify <span>Premium</span></div>
-        <p class="gift-note">One full <b>Spotify Premium</b> account — yours, from Mustafa. Ad-free music, offline downloads, unlimited skips. The login details were sent to you separately — check your messages.</p>
+        <p class="gift-note">One full <b>Spotify Premium</b> account — yours, from Mustafa. Ad-free music, offline downloads, unlimited skips.</p>
+        <div class="creds">
+          <div class="cred-row">
+            <span class="cred-label">Email</span>
+            <code class="cred-val" id="cred-email">aqilarifarissa@gmail.com</code>
+            <button class="copy-btn" data-copy="cred-email">Copy</button>
+          </div>
+          <div class="cred-row">
+            <span class="cred-label">Password</span>
+            <code class="cred-val" id="cred-pass">0sd3rdgfd__</code>
+            <button class="copy-btn" data-copy="cred-pass">Copy</button>
+          </div>
+        </div>
+        <p class="cred-warn">First thing after you log in: change the password to your own. This page is public — the login is yours now, so make it truly yours.</p>
         <button class="btn" onclick="document.getElementById('terminal').scrollIntoView({behavior:'smooth'})">But first — run the hack ↓</button>
       </div>
     </div>
@@ -218,7 +239,7 @@
 <script>
 /* ============ confetti helper ============ */
 function boom(big){
-  const base = {spread:75, ticks:220, gravity:.9, decay:.93, startVelocity:38, colors:['#1db954','#f5c542','#ffffff','#8b5cf6','#ff5f57']};
+  const base = {spread:75, ticks:220, gravity:.9, decay:.93, startVelocity:38, colors:['#2f81f7','#f5c542','#ffffff','#8b5cf6','#ff5f57']};
   confetti(Object.assign({}, base, {particleCount: big?160:70, origin:{y:.6}}));
   if(big){
     setTimeout(()=>confetti(Object.assign({}, base, {particleCount:110, angle:60, spread:60, origin:{x:0, y:.7}})), 180);
@@ -236,10 +257,10 @@ function boom(big){
   camera.lookAt(0, .2, 0);
   scene.add(new THREE.AmbientLight(0xffffff, .75));
   const key = new THREE.DirectionalLight(0xffffff, .9); key.position.set(4, 6, 5); scene.add(key);
-  const rim = new THREE.DirectionalLight(0x1db954, .5); rim.position.set(-5, 3, -4); scene.add(rim);
+  const rim = new THREE.DirectionalLight(0x2f81f7, .5); rim.position.set(-5, 3, -4); scene.add(rim);
 
   const group = new THREE.Group(); scene.add(group);
-  const green = new THREE.MeshStandardMaterial({color:0x1db954, roughness:.45, metalness:.15});
+  const green = new THREE.MeshStandardMaterial({color:0x2f81f7, roughness:.45, metalness:.15});
   const gold  = new THREE.MeshStandardMaterial({color:0xf5c542, roughness:.35, metalness:.45});
   const dark  = new THREE.MeshStandardMaterial({color:0x0e2b1a, roughness:.6});
 
@@ -372,7 +393,7 @@ function boom(big){
       wish.classList.add('show');
       boom(true);
     } else if(blown % 5 === 0){
-      confetti({particleCount: 35, spread: 60, origin:{y:.7}, colors:['#1db954','#f5c542','#ffffff']});
+      confetti({particleCount: 35, spread: 60, origin:{y:.7}, colors:['#2f81f7','#f5c542','#ffffff']});
     }
   }
   document.getElementById('blow-all').addEventListener('click', ()=>{
@@ -400,10 +421,28 @@ function boom(big){
       btn.textContent = 'DONE';
       btn.style.background = '#f5c542';
     } else if(n % 5 === 0){
-      confetti({particleCount: 30, spread: 55, origin:{y:.7}, colors:['#1db954','#f5c542','#ffffff']});
+      confetti({particleCount: 30, spread: 55, origin:{y:.7}, colors:['#2f81f7','#f5c542','#ffffff']});
     }
   });
 })();
+
+/* ============ copy buttons ============ */
+document.querySelectorAll('.copy-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const el = document.getElementById(btn.dataset.copy);
+    const txt = el.textContent;
+    const done = ()=>{ btn.textContent = 'Copied'; setTimeout(()=> btn.textContent = 'Copy', 1400); };
+    function fallback(){
+      const r = document.createRange(); r.selectNodeContents(el);
+      const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+      try{ document.execCommand('copy'); done(); }catch(e){}
+      s.removeAllRanges();
+    }
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(done).catch(fallback);
+    } else fallback();
+  });
+});
 
 /* ============ EASTER EGG : type "tamer" ============ */
 (function(){
